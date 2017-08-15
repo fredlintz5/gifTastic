@@ -45,7 +45,7 @@ function getData() {
     $("#gifs").empty();
 
     var buttonInput = $(this).html();
-    var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + buttonInput +"&api_key=d7b7211e027547b09b92844a2907e598&limit=10&rating";
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + buttonInput +"&api_key=d7b7211e027547b09b92844a2907e598&limit=10&rating";
 
     $.ajax({
       url: queryURL,
@@ -64,7 +64,7 @@ function animate() {
   $("#gifs").on("click", "img", function() { 
     
     var buttonInput = $("img").data("html");
-    var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + buttonInput +"&api_key=d7b7211e027547b09b92844a2907e598&limit=10&rating";
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + buttonInput +"&api_key=d7b7211e027547b09b92844a2907e598&limit=10&rating";
 
     if ($("img").data("html") === buttonInput) {
       $.ajax({
