@@ -1,114 +1,128 @@
-   
-var gifs = ["Cats", "Honey Badger", "Batman"];
-    
+//initial array of  buttons
+var buttons = [
+  { html: "Cats",
+    still: [],
+    active: [] },
+  { html: "Honey Badger",
+    still: [],
+    active: [] },
+  { html: "Batman",
+    still: [],
+    active: [] } ];
 
+
+
+//add buttons to screen based off of buttons array
+function renderButtons() {
+
+  $('#buttons').empty();
+
+  for (var i = 0; i < buttons.length; i++) {
+    closure(i); 
+  }
+  buttonClick();
+  imageClick();
+}
 renderButtons();
-getData();
-create();
-remove();
-animate();
-// deAnimate();
 
 
-function create() {
-  $("#inputButton").click(function(event) {
-    event.preventDefault();
+// research this further..."closure" (ajax request inside of a foor loop)
+function closure(i) {
 
-    var gif = $("#inputForm").val()
-
-    if (gif !== "") {
-      gifs.push(gif);
-      $('#buttons').empty();
-      renderButtons();
-      getData();
-    }
-
-  });
-}
-
-
-function remove() {
-  $("#removeGifs").click(function() {
-
-      gifs.pop();
-      $("#buttons").empty();
-      renderButtons();
-      getData();
-
-  });
-}
-
-
-function getData() {
-  $("#buttons div").click(function() {
-
-    $("#gifs").empty();
-
-    var buttonInput = $(this).html();
-    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + buttonInput +"&api_key=d7b7211e027547b09b92844a2907e598&limit=10&rating";
+    var buttonHTML = buttons[i].html;
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + buttonHTML +"&api_key=d7b7211e027547b09b92844a2907e598&limit=10&rating";
 
     $.ajax({
       url: queryURL,
       method: 'GET',
     })
     .done(function(response) {
-      $("#gifs").append("<img data-html='" + buttonInput + "' src='" + response.data[0].images.downsized_still.url + "' width='250' >");
+      
+      buttons[i].still = response.data[0].images.downsized_still.url;
+      buttons[i].active = response.data[0].images.downsized.url;
+
     })
 
-  }); 
-  
+
+    $("#buttons").append("<div class='btn btn-info btn-block'>" + buttons[i].html + "</div>"); 
 }
 
 
-function animate() {
-  $("#gifs").on("click", "img", function() { 
-    
-    var buttonInput = $("img").data("html");
-    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + buttonInput +"&api_key=d7b7211e027547b09b92844a2907e598&limit=10&rating";
+//add corresponding still Gif image upon click
+function buttonClick() {
+  $("#buttons div").click(function() {
 
-    if ($("img").data("html") === buttonInput) {
-      $.ajax({
-        url: queryURL,
-        method: 'GET',
-      })
-      .done(function(response) {
-        $("img").replaceWith("<img data-clicked='yes' src='" + response.data[0].images.downsized.url + "' width='250' >");
-      }) 
+    var HTML = $(this).html();
+
+    for (var i = 0; i < buttons.length; i++) {
+      if (buttons[i].html === HTML) {
+
+        $('#gifs').append("<img data-status='still' data-html='" + buttons[i].html + "' src='" + buttons[i].still + "' width='200'/>");
+      }
     }
+    imageClick();
   }); 
 }
 
-// function deAnimate() {
-//   $("#gifs").on("click", "img", function() { 
 
-//     var buttonInput = $("img").data("html");
-//     console.log(buttonInput);
-//     var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + buttonInput +"&api_key=d7b7211e027547b09b92844a2907e598&limit=10&rating";
+//animate or de-animate gif upon click
+function imageClick() {
+  $("#gifs img").click(function() {
 
-//     if ($("img").data("html") === "yes") {
-//       $.ajax({
-//         url: queryURL,
-//         method: 'GET',
-//       })
-//       .done(function(response) {
-//         $("#gifs").replaceWith("<img data-html='" + buttonInput + "' src='" + response.data[0].images.downsized_still.url + "' width='250' >");
-//       })
-//     }
-//   });
-// }
+    var IMG = $(this).data("status");
+    var HTML = $(this).data("html");
 
+    for (var i = 0; i < buttons.length; i++) {
+      if (IMG === "still" && HTML === buttons[i].html) {
+        $(this).replaceWith("<img data-status='active' data-html='" + buttons[i].html + "' src='" + buttons[i].active + "' width='200'/>");
+        imageClick();
+      } else if (IMG === "active" && HTML === buttons[i].html) {
+        $(this).replaceWith("<img data-status='still' data-html='" + buttons[i].html + "' src='" + buttons[i].still + "' width='200'/>");
+        imageClick();
+      }
+    }
 
-function renderButtons() {
-  for (var i = 0; i < gifs.length; i++) {
-      $("#buttons").append("<div class='btn btn-info btn-block'>" + gifs[i] + "</div>");
-  }    
+  }); 
 }
+
+
+// create buttons from input form field
+$("#inputButton").click(function(event) {
+  event.preventDefault();
+
+  var newButton = $("#inputForm").val();
+
+  if (newButton !== "") {
+    buttons.push({ html: newButton,
+                    still: "",
+                    active: ""});
+    $('#buttons').empty();
+    renderButtons();
+  }
+  newButton = $("#inputForm").val("");
+
+});
+
+
+// remove buttons from button div
+$("#removeButtons").click(function() {
+    buttons.pop();
+    $("#buttons").empty();
+    renderButtons();
+});
+
+
+// empty gif image area
+$('#emptyGifs').click(function() {
+  $('#gifs').empty();
+});
+
+
+
+
+
 
  
-
-
-
-
 
 
 
