@@ -1,18 +1,5 @@
-//initial array of  buttons
-var buttons = [
-  { html: "Cats",
-    still: [],
-    active: [] },
-  { html: "Honey Badger",
-    still: [],
-    active: [] },
-  { html: "Batman",
-    still: [],
-    active: [] } ];
 
-
-
-//add buttons to screen based off of buttons array
+//add buttons to screen based off of top ten popular gifs
 function renderButtons() {
 
   $('#buttons').empty();
@@ -102,6 +89,9 @@ $("#inputButton").click(function(event) {
   newButton = $("#inputForm").val("");
 
 });
+
+
+
 
 
 // remove buttons from button div
